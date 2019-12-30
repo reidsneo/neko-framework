@@ -88,7 +88,6 @@ class App implements ArrayAccess {
         if(false === $provider instanceof Provider) {
             throw new InvalidArgumentException("Provider {$class} must be instance of Rakit\\Framework\\Provider", 1);
         }
-
         $provider->register();
     }
 
@@ -527,10 +526,20 @@ class App implements ArrayAccess {
     public function registerBaseProviders()
     {
         $base_providers = [
-            'Neko\Framework\View\ViewServiceProvider',
+            'Neko\Framework\View\ViewServiceProvider'
         ];
 
         foreach($base_providers as $provider_class) {
+            $this->provide($provider_class);
+        }
+    }
+
+    /**
+     * Register custom providers
+     */
+    public function registerProviders($providers)
+    {
+        foreach($providers as $provider_class) {
             $this->provide($provider_class);
         }
     }

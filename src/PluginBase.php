@@ -2,10 +2,24 @@
 namespace Neko\Framework;
 
 use Neko\Framework\App;
-use Neko\Framework\Controller;
+use Neko\Framework\Provider;
 
-abstract class PluginBase extends Controller {
+class PluginBase extends Provider {
 
+    public function register()
+	{
+        
+    }
+    
+	public function boot()
+	{
+    }
+
+    public function registerComponents()
+    {
+        return [];
+    }
+    
 /*
         //echo "constructed<br>";
         //echo get_class($this);
@@ -27,8 +41,8 @@ abstract class PluginBase extends Controller {
        // self::register();
     }
 */
-    public function doregister()
-    {
+    //public function doregister()
+    //{
         //echo "<br>register pluginbase";
         
         /*
@@ -49,5 +63,5 @@ abstract class PluginBase extends Controller {
 
         //$this->bind(hellobase::class,new \Hero\Hello\Controller\hellobase($this));
         
-    }
+    //}
 }

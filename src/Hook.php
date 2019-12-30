@@ -42,14 +42,14 @@ class Hook {
     {
         $hooks = Arr::flatten($this->hooks->get($event, []));
         $first_hook = array_shift($hooks);
-        return $first_hook? $this->applyHook($hook) : null;   
+        return $first_hook? $this->applyHook($first_hook,null) : null;   
     }
 
     public function applyLast($event)
     {
         $hooks = Arr::flatten($this->hooks->get($event, []));
         $last_hook = array_pop($hooks);
-        return $last_hook? $this->applyHook($hook) : null;   
+        return $last_hook? $this->applyHook($last_hook,null) : null;   
     }
 
     public function apply($event, array $params = array())

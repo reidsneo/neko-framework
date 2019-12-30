@@ -13,12 +13,14 @@ class ViewServiceProvider extends Provider {
     {
         $app = $this->app;
         $app['view:Neko\Framework\View\View'] = $app->container->singleton(function($container) use ($app) {
-            $view_path = $app->config->get('view.path');
+            $view_path = $app->config->get('app.path')."themes/".$app->config->get('user_theme');
             $engine = $app->config->get('view.engine');
 
             if(!$engine) {
+                //echo "basic mode";
                 $engine = new BasicViewEngine($view_path);
             } elseif(is_string($engine)) {
+                //echo "blade mode";
                 $engine = $container->make($engine, [$view_path]);
             }
 
