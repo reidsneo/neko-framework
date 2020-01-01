@@ -20,7 +20,6 @@ class ViewServiceProvider extends Provider {
                 //echo "basic mode";
                 $engine = new BasicViewEngine($view_path);
             } elseif(is_string($engine)) {
-                //echo "blade mode";
                 $engine = $container->make($engine, [$view_path]);
             }
 
