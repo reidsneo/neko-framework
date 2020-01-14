@@ -30,6 +30,9 @@ class App implements ArrayAccess {
 
     public $container;
 
+    public $plugin_list = array();
+    public $plugin_active = array();
+
     protected $name;
 
     protected $booted = false;

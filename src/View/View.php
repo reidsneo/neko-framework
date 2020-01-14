@@ -10,6 +10,8 @@ class View {
 
     protected $engine;
 
+    protected $theme;
+
     protected $data = array();
 
     public function __construct(App $app, ViewEngineInterface $engine)
@@ -21,6 +23,11 @@ class View {
     public function setEngine(ViewEngineInterface $engine)
     {
         $this->engine = $engine;
+    }
+
+    public function setTheme($theme)
+    {
+        $this->theme = $theme;
     }
 
     public function set($key, $value)
@@ -37,7 +44,7 @@ class View {
     {
         $data = array_merge($this->data, $data);
         $data['app'] = $this->app;
-
+        //$this->engine->theme = $this->theme;
         return $this->engine->render($file, $data);
     }
 
