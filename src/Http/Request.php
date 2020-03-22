@@ -6,6 +6,8 @@ use Neko\Framework\App;
 use Neko\Framework\Bag;
 use Neko\Framework\MacroableTrait;
 use Neko\Framework\Router\Route;
+use Neko\Framework\Util\Arr;
+use Neko\Facade\Session;
 
 class Request {
 
@@ -262,6 +264,76 @@ class Request {
     public function params()
     {
         return $this->params;
+    }
+
+    public function can($method,$path=null)
+    {
+        $name = "";
+        echo method_exists($path,'getName');
+        if(method_exists($path,'getName') && $path==null)
+        {
+            $name = $this->app->router->findMatch($this->path(),"GET")->getName();
+        }else{
+            $name = $this->app->router->findMatch($path,"GET");
+            if($name!==null)
+            {
+                $name = $name->getName();
+            }
+        }
+
+        if(Session::get("user")!=null && Arr::inarray(Session::get("user")['access'],"route",$name))
+        {
+            $key = Arr::inarraykey(Session::get("user")['access'],"route",$name);
+            if(is_int($key) && Session::get("user")['access'][$key][$method] > 0)
+            {
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+
+    public function countcan($method,$array)
+    {
+        if(is_array($array))
+        {
+            $count = 0;
+            foreach ($array as $key => $val) {
+                if(is_array($val) && isset($val['url']))
+                {
+                    if($this->can($method,$val['url']))
+                    {
+                        $count = $count+1;
+                    }
+                }else{
+                    if(is_array($val) && !is_int($key))
+                    {
+                        foreach ($val as $k => $v) {
+                            if(is_array($v) && isset($v['url']))
+                            {
+                                if($this->can($method,$v['url']))
+                                {
+                                    $count = $count+1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return $count;
+    }
+
+    public function countsub($menuitem)
+    {
+        if($this->countcan("acc",$menuitem) > 0)
+        {
+            return true;
+        }else{
+            return false;
+        }
     }
 
 }

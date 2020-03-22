@@ -68,6 +68,16 @@ class Router {
         return $routes;
     }
 
+    public function getMiddlewares()
+    {
+        $routes = $this->routes;
+        foreach($this->groups as $group) {
+            $routes = array_merge($routes, $group->middlewares);
+        }
+
+        return $routes;
+    }
+
     /**
      * Register a Route
      *
@@ -378,6 +388,15 @@ class Router {
     public function makePattern($method, $path)
     {
         return $method.$path;
+    }
+
+    public function url($routename)
+    {
+        global $app;
+        if($app->router->findRouteByName($routename)!=null)
+        {
+            return $app->url.$app->router->findRouteByName($routename)->getPath();
+        }
     }
 
 }

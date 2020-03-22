@@ -3,10 +3,16 @@
 namespace Neko\Framework\View;
 
 use Neko\Framework\App;
+use Neko\Facade\Session;
+use Neko\Menu\Menu;
+use Neko\Menu\Link;
+use Neko\Menu\Html;
+use Neko\Menu\url\url;
 
 class View {
 
     protected $app;
+
 
     protected $engine;
 
@@ -42,10 +48,22 @@ class View {
 
     public function render($file, array $data = array())
     {
+        global $menulist;
         $data = array_merge($this->data, $data);
+        $data = array_merge($this->app->listgroup, $data);
+        $account = array();
+        if(Session::get("user") !==null)
+        {
+            $account = Session::get("user");
+        }
+        
+        $data = array_merge(array("menulist"=>$menulist),$data);
+        
+        $data = array_merge($account,$data);
         $data['app'] = $this->app;
         //$this->engine->theme = $this->theme;
         return $this->engine->render($file, $data);
+
     }
 
     public function __call($method, $params)

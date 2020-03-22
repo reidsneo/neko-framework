@@ -133,6 +133,19 @@ class Response {
         return $this;
     }
 
+    public function setHeader($key,$value)
+    {
+        $this->headers[$key] = $value;
+        return $this;
+    }
+
+    public function setHeaders($headers)
+    {
+        foreach ($headers as $k => $v) {
+            header($k.$v);
+        }
+    }
+
     /**
      * get setted response content type
      *

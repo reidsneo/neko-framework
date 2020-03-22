@@ -92,7 +92,8 @@ class File {
             'ods' => 'application/vnd.oasis.opendocument.spreadsheet',
         );
 
-        $ext = strtolower(array_pop(explode('.',$file)));
+        //$ext = strtolower(array_pop(explode('.',$file)));
+        $ext = substr(substr($file, strrpos($file, '.', -1), strlen($file)),1);
         if (array_key_exists($ext, $mime_types)) {
             return $mime_types[$ext];
         }
@@ -105,6 +106,50 @@ class File {
         else {
             return 'application/octet-stream';
         }
+    }
+
+
+    public function preview($file)
+    {
+        global $app;
+
+        $lifetime = 31556926; // One year in seconds
+
+        /**
+        * Prepare some header variables
+        */
+        $file_time = filemtime($file); // Get the last modified time for the file (Unix timestamp)
+        $header_content_type = self::getMimeType($file);
+        $header_content_length = filesize($file);
+        $header_etag = md5($file_time . $file);
+        $header_last_modified = gmdate('r', $file_time);
+        $header_expires = gmdate('r', $file_time + $lifetime);
+
+        /**
+        * Is the resource cached?
+        */
+        $h1 = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && $_SERVER['HTTP_IF_MODIFIED_SINCE'] == $header_last_modified;
+        $h2 = isset($_SERVER['HTTP_IF_NONE_MATCH']) && str_replace('"', '', stripslashes($_SERVER['HTTP_IF_NONE_MATCH'])) == $header_etag;
+
+        if ($h1 || $h2) {
+           //fixme $app->response->setHeader('Content-Disposition','inline; filename="' . $file . '"');
+            $app->response->setHeader('Last-Modified',$header_last_modified);
+            $app->response->setHeader('Cache-Control','must-revalidate');
+            $app->response->setHeader('Expires',$header_expires);
+            $app->response->setHeader('Pragma','public');
+            $app->response->setHeader('Etag',$header_etag);
+            return $app->response->setStatus('304');
+        }
+
+        //fixme $app->response->setHeader('Content-Disposition','inline; filename="' . $file . '"');
+        $app->response->setHeader('Last-Modified',$header_last_modified);
+        $app->response->setHeader('Cache-Control','must-revalidate');
+        $app->response->setHeader('Expires',$header_expires);
+        $app->response->setHeader('Pragma','public');
+        $app->response->setHeader('Etag',$header_etag);
+        $app->response->setHeader('Content-Type',$header_content_type);
+        $app->response->setHeader('Content-Length',$header_content_length);
+        return self::getContent($file);//Response::make(file_get_contents($path), 200, $headers);
     }
 
 }

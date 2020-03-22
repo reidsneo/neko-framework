@@ -257,6 +257,29 @@ class Arr
         return true;
     }
 
+
+
+    public static function inarray($array,$coloumn,$val)
+    {
+        if(is_array($array) && in_array($val, array_column($array, $coloumn))) {
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public static function inarraykey($array,$coloumn,$val)
+    {
+        if(is_array($array))
+        {
+            $key = array_search($val, array_column($array, $coloumn));
+            return $key;
+        }else{
+            return false;
+        }
+        
+    }
+
     /**
      * Get a subset of the items from the given array.
      *
