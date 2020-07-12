@@ -13,7 +13,7 @@ class Theme {
     public function asset_a($assetpath)
     {
         global $app;
-        return "/theme/a_".$app->config['admin_theme']."/asset/".$assetpath;
+        return "/theme/".$app->config['admin_theme']."/asset/".$assetpath;
     }
 
     public function asset($assetpath)

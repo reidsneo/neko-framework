@@ -119,7 +119,7 @@ class File {
         * Prepare some header variables
         */
         $file_time = filemtime($file); // Get the last modified time for the file (Unix timestamp)
-        $header_content_type = self::getMimeType($file);
+        $header_content_type = $this->getMimeType($file);
         $header_content_length = filesize($file);
         $header_etag = md5($file_time . $file);
         $header_last_modified = gmdate('r', $file_time);
@@ -149,7 +149,7 @@ class File {
         $app->response->setHeader('Etag',$header_etag);
         $app->response->setHeader('Content-Type',$header_content_type);
         $app->response->setHeader('Content-Length',$header_content_length);
-        return self::getContent($file);//Response::make(file_get_contents($path), 200, $headers);
+        return $this->getContent($file);//Response::make(file_get_contents($path), 200, $headers);
     }
 
 }

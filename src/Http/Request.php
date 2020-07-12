@@ -28,7 +28,14 @@ class Request {
         if($route) $this->defineRoute($route);
         $this->app = $app;
 
-        $this->inputs = new Bag((array) $_POST + (array) $_GET);
+        parse_str(file_get_contents('php://input'), $_PATCH);
+        if($this->isJson($_POST) || $this->isJson($_GET) || $this->isJson($_PATCH))
+        {
+            $_POST = $this->json()->all();
+            $_GET = $this->json()->all();
+            $_PATCH = $this->json()->all();
+        }
+        $this->inputs = new Bag((array) $_POST + (array) $_GET + (array) $_PATCH);
         $this->files = new Bag((array) $_FILES);
         $this->server = new Bag($_SERVER);
     }
@@ -65,7 +72,6 @@ class Request {
         foreach($all_files as $key => $value) {
             $all_files[$key] = $this->hasMultiFiles($key)? $this->multiFiles($key) : $this->file($key);
         }
-
         return array_merge($all_inputs, $all_files);
     }
 
